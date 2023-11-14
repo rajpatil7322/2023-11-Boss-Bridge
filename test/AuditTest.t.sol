@@ -32,7 +32,7 @@ contract AuditTest is Test {
 
         // Deploy token and transfer the user some initial balance
         token = new L1Token();
-        token.transfer(address(user), 1000e18);
+        token.transfer(address(user), 200000e18);
 
         token.transfer(address(user1), 1000e18);
 
@@ -46,26 +46,16 @@ contract AuditTest is Test {
         vm.stopPrank();
     }
 
-    // function testUserCanWithdrawTokensWithOperatorSignature() public {
-    //     vm.startPrank(user);
-    //     uint256 depositAmount = 100e18;
-    //     uint256 userInitialBalance = token.balanceOf(address(user));
+    function testDepositLimit() public {
+        vm.startPrank(user);
+        token.transfer(address(vault),200000e18);
+        vm.stopPrank();
 
-    //     token.approve(address(tokenBridge), depositAmount);
-    //     tokenBridge.depositTokensToL2(user, userInL2, depositAmount);
+        console2.log("Balance of the tokenVault",token.balanceOf(address(vault))/1e18);
+        console2.log("Deposit Limit",tokenBridge.DEPOSIT_LIMIT()/1e18);
 
-    //     assertEq(token.balanceOf(address(vault)), depositAmount);
-    //     assertEq(token.balanceOf(address(user)), userInitialBalance - depositAmount);
-
-    //     (uint8 v, bytes32 r, bytes32 s) = _signMessage(_getTokenWithdrawalMessage(user, depositAmount), operator.key);
-    //     tokenBridge.withdrawTokensToL1(user1, depositAmount, v, r, s);
-    //     v_copy=v;   
-    //     r_copy=r;
-    //     s_copy=s;
-
-    //     assertEq(token.balanceOf(address(user)), userInitialBalance);
-    //     assertEq(token.balanceOf(address(vault)), 0);
-    // }
+       
+    }
 
     function testReplayAttack() public {
         uint256 depositAmount = 100e18;

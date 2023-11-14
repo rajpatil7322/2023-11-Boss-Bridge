@@ -37,7 +37,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
     error L1BossBridge__Unauthorized();
     error L1BossBridge__CallFailed();
 
-    event Deposit(address from, address to, uint256 amount);
+    event Deposit(address from, address to, uint256 amount,uint256 chainid);
 
     constructor(IERC20 _token) Ownable(msg.sender) {
         token = _token;
@@ -74,7 +74,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         token.safeTransferFrom(from, address(vault), amount);
 
         // Our off-chain service picks up this event and mints the corresponding tokens on L2
-        emit Deposit(from, l2Recipient, amount);
+        emit Deposit(from, l2Recipient, amount,block.chainid);    
     }
 
     /*
